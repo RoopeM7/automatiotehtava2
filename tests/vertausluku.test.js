@@ -20,7 +20,6 @@ describe("laskeVertausluvut", () => {
   afterEach(() => {
     mock.reset(ehdokasRekisteri.haeLista);
   });
-
   it("listan eniten ääniä saaneen ehdokkaan vertausluku on listan äänten summa", () => {
     const tulos = laskeVertausluvut(ehdokasRekisteri.haeLista(1));
     assert.equal(tulos[0].vertausluku, 12);
@@ -28,5 +27,20 @@ describe("laskeVertausluvut", () => {
   it("listan toiseksi eniten ääniä saaneen ehdokkaan vertausluku on puolet listan äänien summasta", () => {
     const tulos = laskeVertausluvut(ehdokasRekisteri.haeLista(1));
     assert.equal(tulos[1].vertausluku, 6);
+  });
+  it("arpoo saman äänimäärän saaneiden järjestyksen ja merkitsee arvo: TRUE", () => {
+    const lista = [
+      { numero: 201, nimi: "Testi Eka", aanet: 3 },
+      { numero: 202, nimi: "Testi Toka", aanet: 3 },
+      { numero: 203, nimi: "Testi Kolmas", aanet: 1 },
+    ];
+    mock.method(ehdokasRekisteri, "haeLista", () => lista);
+    const tulos = laskeVertausluvut(ehdokasRekisteri.haeLista(1));
+    const kolmeAaninen = tulos.filter((e) => e.aanet === 3);
+    assert.strictEqual(kolmeAaninen.length, 2);
+    kolmeAaninen.forEach((ehdokas) => {
+      assert.strictEqual(ehdokas.arvottu, true);
+    });
+    mock.reset(ehdokasRekisteri.haeLista);
   });
 });

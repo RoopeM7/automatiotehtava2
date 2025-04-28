@@ -43,4 +43,25 @@ describe("laskeVertausluvut", () => {
     });
     mock.reset(ehdokasRekisteri.haeLista);
   });
+  it("arpoo saman äänimäärän ehdokkaiden järjestyksen ja lisää arvottu-kentän", () => {
+    const lista = [
+      { numero: 201, nimi: "Ehdokas A", aanet: 3 },
+      { numero: 202, nimi: "Ehdokas B", aanet: 3 },
+      { numero: 203, nimi: "Ehdokas C", aanet: 2 },
+    ];
+    const jarjestykset = new Set();
+    for (let i = 0; i < 10; i++) {
+      const tulos = laskeVertausluvut(lista);
+      const samanAanimaaraEhdokkaat = tulos.filter((e) => e.aanet === 3);
+
+      samanAanimaaraEhdokkaat.forEach((ehdokas) => {
+        assert.equal(ehdokas.arvottu, true);
+      });
+      jarjestykset.add(samanAanimaaraEhdokkaat.map((e) => e.numero).join(","));
+    }
+    assert.ok(
+      jarjestykset.size > 1,
+      "Saman äänimäärän ehdokkaiden järjestys ei vaihtele"
+    );
+  });
 });
